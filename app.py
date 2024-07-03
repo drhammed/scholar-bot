@@ -156,22 +156,10 @@ def chat():
     response_with_links = make_clickable_links(response)
 
     return jsonify({"response": response_with_links})
- 
-def format_response(response):
-    # Split response into sections and format them
-    lines = response.split('\n')
-    formatted_response = []
-    for line in lines:
-        # Checking for headings and bullet points to add line breaks
-        if "**" in line:
-            formatted_response.append(f'\n{line.strip()}\n')
-        elif re.match(r'^\d+\)', line.strip()):
-            formatted_response.append(f'{line.strip()}\n')
-        else:
-            formatted_response.append(f'{line.strip()} ')
 
-    return ''.join(formatted_response).strip()
+#if __name__ == "__main__":
+ #   app.run(debug=True)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)a
+    app.run(host="0.0.0.0", port=port, debug=True)
