@@ -156,7 +156,7 @@ def chat():
     response_with_links = make_clickable_links(response)
 
     return jsonify({"response": response_with_links})
- 
+
 def format_response(response):
     # Convert markdown to HTML
     html_response = markdown_to_html(response)
@@ -169,10 +169,9 @@ def markdown_to_html(markdown_text):
     markdown_text = markdown_text.replace("\n* ", "<ul><li>").replace("\n\t* ", "</li><li>").replace("</li><ul><li>", "</li><ul><li>")
     markdown_text = markdown_text.replace("\n", "<br>").replace("</li><br>", "</li>")
     markdown_text += "</li></ol></ul>"
-    return markdown_text
- 
- 
- 
+    return markdown_text 
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)a
