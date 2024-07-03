@@ -156,21 +156,21 @@ def chat():
     response_with_links = make_clickable_links(response)
 
     return jsonify({"response": response_with_links})
-
+ 
 def format_response(response):
-    # Convert markdown to HTML
-    html_response = markdown_to_html(response)
-    return html_response
+    # Split response into sections and format them
+    lines = response.split('\n')
+    formatted_response = []
+    for line in lines:
+        # Checking for headings and bullet points to add line breaks
+        if "**" in line:
+            formatted_response.append(f'\n{line.strip()}\n')
+        elif re.match(r'^\d+\)', line.strip()):
+            formatted_response.append(f'{line.strip()}\n')
+        else:
+            formatted_response.append(f'{line.strip()} ')
 
-def markdown_to_html(markdown_text):
-    # Convert markdown to HTML, handling lists and bold text
-    markdown_text = markdown_text.replace("**", "<b>").replace("<b><b>", "</b>").replace("<b></b>", "")
-    markdown_text = markdown_text.replace("\n1. ", "<ol><li>").replace("\n2. ", "</li><li>").replace("\n3. ", "</li><li>")
-    markdown_text = markdown_text.replace("\n* ", "<ul><li>").replace("\n\t* ", "</li><li>").replace("</li><ul><li>", "</li><ul><li>")
-    markdown_text = markdown_text.replace("\n", "<br>").replace("</li><br>", "</li>")
-    markdown_text += "</li></ol></ul>"
-    return markdown_text 
-
+    return ''.join(formatted_response).strip()
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
