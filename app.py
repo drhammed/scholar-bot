@@ -1,3 +1,4 @@
+#pkgs
 #pip install langchain_voyageai
 #!pip install langchain_openai
 #!pip install langchain_pinecone
