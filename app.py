@@ -163,14 +163,22 @@ def format_response(response):
     return html_response
 
 def markdown_to_html(markdown_text):
-    # Convert markdown to HTML, handling lists and bold text
-    markdown_text = markdown_text.replace("**", "<b>").replace("<b><b>", "</b>").replace("<b></b>", "")
-    markdown_text = markdown_text.replace("\n1. ", "<ol><li>").replace("\n2. ", "</li><li>").replace("\n3. ", "</li><li>")
-    markdown_text = markdown_text.replace("\n* ", "<ul><li>").replace("\n\t* ", "</li><li>").replace("</li><ul><li>", "</li><ul><li>")
-    markdown_text = markdown_text.replace("\n", "<br>").replace("</li><br>", "</li>")
-    markdown_text += "</li></ol></ul>"
-    return markdown_text
+    # Replace markdown syntax with HTML tags
+    html_text = markdown_text.replace("**", "<b>").replace("</b><b>", "</b>")
+    html_text = html_text.replace("\n", "<br>").replace("</b><br>", "</b>")
 
+    # Handling lists
+    html_text = re.sub(r'\n1\.', '<ol><li>', html_text)
+    html_text = re.sub(r'\n(\d+)\.', '</li><li>', html_text)
+    html_text = html_text.replace("</li><br>", "</li>")
+    html_text = html_text.replace("</li><li>", "</li><li>") + "</li></ol>"
+
+    # Handling unordered lists
+    html_text = html_text.replace("\n* ", "<ul><li>").replace("\n\t* ", "</li><li>")
+    html_text = html_text.replace("</li><br>", "</li>").replace("</li><ul><li>", "</li><ul><li>") + "</li></ul>"
+
+    return html_text
+ 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
