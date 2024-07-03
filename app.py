@@ -5,15 +5,15 @@
 #pip install groq
 #!pip install langchain_groq
 
-import streamlit as st
+#import streamlit as st
 from langchain_voyageai import VoyageAIEmbeddings
 import os
 import json
 import boto3
 from dotenv import load_dotenv
 from urllib.parse import urlparse
-from pinecone import Pinecone
-import pinecone
+#from pinecone import Pinecone
+#import pinecone
 from langchain_openai import ChatOpenAI
 import openai
 from groq import Groq
