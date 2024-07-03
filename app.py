@@ -1,24 +1,31 @@
+#pkgs
+#pip install langchain_voyageai
+#!pip install langchain_openai
+#!pip install langchain_pinecone
+#pip install groq
+#!pip install langchain_groq
+
+#import streamlit as st
+from langchain_voyageai import VoyageAIEmbeddings
 import os
-import re
-import uuid
 import json
 import boto3
-import time
-import warnings
-import openai
-import pinecone
-from flask import Flask, request, jsonify, send_from_directory
 from dotenv import load_dotenv
 from urllib.parse import urlparse
-from langchain_voyageai import VoyageAIEmbeddings
+from pinecone import Pinecone
+import pinecone
 from langchain_openai import ChatOpenAI
-from langchain_groq import Groq
+import openai
+from groq import Groq
 from langchain.chains import LLMChain, RetrievalQA
+import time
+import re
+import warnings
 from langchain_pinecone import PineconeVectorStore
 from langchain.memory import ConversationBufferMemory
 from langchain.schema import HumanMessage
 from langchain.prompts import ChatPromptTemplate
-from langchain.chains.conversation.memory import ConversationBufferWindowMemory
+from langchain.chains import ConversationChain
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.runnables.base import Runnable
@@ -28,7 +35,12 @@ from langchain_core.prompts import (
     MessagesPlaceholder,
 )
 from langchain_core.messages import SystemMessage
-from markdown2 import markdown
+from langchain.chains.conversation.memory import ConversationBufferWindowMemory
+from langchain_groq import ChatGroq
+import uuid
+from flask import Flask, request, jsonify, send_from_directory
+
+
 
 load_dotenv()
 
@@ -112,6 +124,8 @@ If the user responds with "Yes," proceed with providing detailed guidance. If th
 Please ensure this process is followed for all guidance and support calls.
 """
 
+conversational_memory_length = 5
+
 memory = ConversationBufferWindowMemory(k=5, memory_key="chat_history", return_messages=True)
 
 @app.route('/')
@@ -140,33 +154,11 @@ def chat():
     
     # Apply the clickable link formatting
     response_with_links = make_clickable_links(response)
-    
-    # Convert markdown to HTML
-    formatted_response = markdown_to_html(response_with_links)
 
-    return jsonify({"response": formatted_response})
+    return jsonify({"response": response_with_links})
 
-def format_response(response):
-    # Convert markdown to HTML
-    html_response = markdown_to_html(response)
-    return html_response
-
-def markdown_to_html(markdown_text):
-    # Replace markdown syntax with HTML tags
-    html_text = markdown_text.replace("**", "<b>").replace("</b><b>", "</b>")
-    html_text = html_text.replace("\n", "<br>").replace("</b><br>", "</b>")
-
-    # Handling lists
-    html_text = re.sub(r'\n1\.', '<ol><li>', html_text)
-    html_text = re.sub(r'\n(\d+)\.', '</li><li>', html_text)
-    html_text = html_text.replace("</li><br>", "</li>")
-    html_text = html_text.replace("</li><li>", "</li><li>") + "</li></ol>"
-
-    # Handling unordered lists
-    html_text = html_text.replace("\n* ", "<ul><li>").replace("\n\t* ", "</li><li>")
-    html_text = html_text.replace("</li><br>", "</li>").replace("</li><ul><li>", "</li><ul><li>") + "</li></ul>"
-
-    return html_text
+#if __name__ == "__main__":
+ #   app.run(debug=True)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
