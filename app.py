@@ -158,17 +158,19 @@ def chat():
     return jsonify({"response": response_with_links})
  
 def format_response(response):
-    # Split response into lines and format them
+    # Split response into sections and format them
     lines = response.split('\n')
-    formatted_lines = []
+    formatted_response = []
     for line in lines:
-        # Adding bullet points and new lines for better structure
-        if re.match(r'^\d+\)', line.strip()):
-            formatted_lines.append(f'\n{line.strip()}\n')
+        # Checking for headings and bullet points to add line breaks
+        if "**" in line:
+            formatted_response.append(f'\n{line.strip()}\n')
+        elif re.match(r'^\d+\)', line.strip()):
+            formatted_response.append(f'{line.strip()}\n')
         else:
-            formatted_lines.append(f'{line.strip()} ')
+            formatted_response.append(f'{line.strip()} ')
 
-    return ''.join(formatted_lines)
+    return ''.join(formatted_response).strip()
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
