@@ -146,9 +146,26 @@ def chat():
 
     return jsonify({"response": formatted_response})
 
+def format_response(response):
+    # Convert markdown to HTML
+    html_response = markdown_to_html(response)
+    return html_response
+
 def markdown_to_html(markdown_text):
-    # Convert markdown to HTML using markdown2 library
-    html_text = markdown(markdown_text)
+    # Replace markdown syntax with HTML tags
+    html_text = markdown_text.replace("**", "<b>").replace("</b><b>", "</b>")
+    html_text = html_text.replace("\n", "<br>").replace("</b><br>", "</b>")
+
+    # Handling lists
+    html_text = re.sub(r'\n1\.', '<ol><li>', html_text)
+    html_text = re.sub(r'\n(\d+)\.', '</li><li>', html_text)
+    html_text = html_text.replace("</li><br>", "</li>")
+    html_text = html_text.replace("</li><li>", "</li><li>") + "</li></ol>"
+
+    # Handling unordered lists
+    html_text = html_text.replace("\n* ", "<ul><li>").replace("\n\t* ", "</li><li>")
+    html_text = html_text.replace("</li><br>", "</li>").replace("</li><ul><li>", "</li><ul><li>") + "</li></ul>"
+
     return html_text
 
 if __name__ == "__main__":
