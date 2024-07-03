@@ -69,6 +69,7 @@
             background: #f9f9f9;
             padding: 10px;
             border-radius: 4px;
+            white-space: pre-wrap; /* Preserves whitespace and line breaks */
         }
         .user-message {
             align-self: flex-end;
@@ -119,7 +120,7 @@
             });
 
             const data = await response.json();
-            responseDiv.innerHTML = data.response;
+            responseDiv.innerHTML = data.response; // Use innerHTML to render HTML content
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
